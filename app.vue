@@ -235,12 +235,13 @@ const signAndSubmitTransferTransaction = async () => {
       amount: parseInt(utxos[0].amount),
     };
     const targetPuzzleHash = toHex(new Uint8Array(bech32m.fromWords(bech32m.decode(target.value).words)));
-    const conditions = [Program.fromList([
+    const createCoinCondition = Program.fromList([
       Program.fromInt(51),
       Program.fromBytes(fromHex(targetPuzzleHash)),
       Program.fromInt(coin.amount),
       Program.fromList([]),
-    ])];
+    ]);
+    const conditions = [createCoinCondition];
 
     const delegatedPuzzle = P2_CONDITIONS_MOD.run(Program.fromList([Program.fromList(conditions)])).value;
     const delegatedSolution = Program.fromInt(0);
@@ -274,12 +275,12 @@ const signAndSubmitTransferTransaction = async () => {
 
     const signature = decodeSignature(response);
 
-    const b64ChallengeHash = arrayBufferToBase64(challengeHash)
+    const challengeHashBase64 = arrayBufferToBase64(challengeHash)
         .replaceAll('/', '_')
         .replaceAll('+', '-')
         .replaceAll('=', '');
 
-    const index = findIndexOfArray(new Uint8Array(response.clientDataJSON), new TextEncoder().encode(b64ChallengeHash));
+    const index = findIndexOfArray(new Uint8Array(response.clientDataJSON), new TextEncoder().encode('"challenge":"' + challengeHashBase64 + '"'));
 
     console.log({ index });
     if (index === -1) {
@@ -301,7 +302,7 @@ const signAndSubmitTransferTransaction = async () => {
       delegatedPuzzle,
       delegatedSolution,
       Program.fromHex(signature),
-      Program.fromBytes(coinId),
+      Program.fromBytes(coinId)
     ]);
 
     const coinSpend: CoinSpend = {
@@ -323,9 +324,9 @@ const signAndSubmitTransferTransaction = async () => {
     if (result?.status === 'SUCCESS') {
       sendResultMessage.value = 'Transaction submitted successfully!';
     } else {
-      sendResultMessage.value = `Error: ${result}`;
+      sendResultMessage.value = `Error: ${result?.detail || result}`;
     }
-  } catch (e) {
+  } catch (e: any) {
     console.error(e);
     sendResultMessage.value = `Error: ${e}`;
   }
