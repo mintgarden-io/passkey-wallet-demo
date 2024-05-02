@@ -2,6 +2,9 @@
 
 This is a demo application to showcase how passkeys can be used as a Chia wallet.
 
+WARNING: THIS PROJECT HAS NOT BEEN REVIEWED YET. USE AT YOUR OWN RISK
+
+
 ## Setup
 
 Make sure to install the dependencies:
