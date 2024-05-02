@@ -370,7 +370,7 @@ useIntervalFn(async () => {
 }, 10000);
 </script>
 <template>
-  <div class="mx-auto mt-16 flex max-w-xl flex-col gap-4 whitespace-nowrap dark:text-white">
+  <div class="mx-auto mt-16 flex max-w-xl flex-col gap-4 whitespace-nowrap">
     <div class="text-2xl font-bold">Testnet11 Passkey Wallet</div>
 
     <template v-if="address">
